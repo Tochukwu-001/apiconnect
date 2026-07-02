@@ -38,7 +38,7 @@ export default function Navbar (){
     ]
 
     return(
-        <main className="flex items-center justify-between shadow-md max-md:px-3 md:px-10 py-2.5 fixed bg-white">
+        <main className="flex items-center justify-between shadow-md max-md:px-3 md:px-10 py-2.5 bg-white z-50 sticky top-0">
             <Link href={"/"} className="flex items-center gap-0.5 z-50">
                 <Image
                     src={"/logo.png"}
@@ -61,7 +61,7 @@ export default function Navbar (){
                     ))}
                 </div>
 
-                <Link style={{backgroundColor:Theme.darkGreen}} href={"/signin"} className="flex gap-1 text-white px-4 py-1.5 rounded-sm items-center group z-50 max-md:hidden">
+                <Link style={{backgroundColor:Theme.darkGreen}} href={"/Signin"} className="flex gap-1 text-white px-4 py-1.5 rounded-sm items-center group z-50 max-md:hidden">
                    Get Started
                    <GoArrowUpRight className="group-hover:translate-x-0.5 transition-all duration-200" />
                 </Link>
