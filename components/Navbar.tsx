@@ -5,7 +5,11 @@ import { GoArrowUpRight } from "react-icons/go";
 import { Theme } from "./Theme";
 import { HiOutlineMenuAlt4 } from "react-icons/hi";
 import { CgClose } from "react-icons/cg";
-import { useState } from "react";
+import { useId, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Avatar from "@mui/material/Avatar";
 
 interface NavItem {
   name: string;
@@ -13,8 +17,10 @@ interface NavItem {
 }
 
 export default function Navbar() {
+  const { data: session } = useSession();
+  // console.log(session);
 
-    const [navOpen, setNavOpen] = useState(false)
+  const [navOpen, setNavOpen] = useState(false);
 
   const navItems: NavItem[] = [
     {
@@ -34,6 +40,18 @@ export default function Navbar() {
       url: "/view",
     },
   ];
+
+  const id = useId();
+  const buttonId = `${id}-button`;
+  const menuId = `${id}-menu`;
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <main className="flex items-center justify-between shadow-md max-md:px-3 md:px-10 py-2.5 sticky top-0 z-50 bg-white">
@@ -62,41 +80,82 @@ export default function Navbar() {
           ))}
         </div>
 
-        <Link
-          style={{ backgroundColor: Theme.darkGreen }}
-          href={"/signin"}
-          className="flex gap-1 text-white px-4 py-1.5 rounded-sm items-center group max-md:hidden z-50"
-        >
-          Get Started
-          <GoArrowUpRight className="group-hover:translate-x-0.5 transition-all duration-200" />
-        </Link>
+        {session ? (
+          <div>
+            <button
+              id={buttonId}
+              aria-controls={open ? menuId : undefined}
+              aria-haspopup="true"
+              aria-expanded={open}
+              onClick={handleClick}
+            >
+              <Avatar
+                alt={session?.user?.name || "User"}
+                src={session?.user?.image || ""}
+              />
+            </button>
+            <Menu
+              id={menuId}
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              slotProps={{
+                list: {
+                  "aria-labelledby": buttonId,
+                },
+              }}
+            >
+              <MenuItem onClick={handleClose}>
+                <Link href={"/profile"}>My Profile</Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>Settings</MenuItem>
+              <MenuItem onClick={handleClose}><button onClick={()=> signOut()}>Sign Out</button></MenuItem>
+            </Menu>
+          </div>
+        ) : (
+          <Link
+            style={{ backgroundColor: Theme.darkGreen }}
+            href={"/signin"}
+            className="flex gap-1 text-white px-4 py-1.5 rounded-sm items-center group max-md:hidden z-50"
+          >
+            Get Started
+            <GoArrowUpRight className="group-hover:translate-x-0.5 transition-all duration-200" />
+          </Link>
+        )}
 
         {/* mobile and tablet nav */}
-        <div className={`h-dvh bg-white absolute top-0 left-0 w-full pt-20 items-center flex-col gap-10 lg:hidden ${navOpen ? "flex" : "hidden"}`}>
+        <div
+          className={`h-dvh bg-white absolute top-0 left-0 w-full pt-20 items-center flex-col gap-10 lg:hidden ${navOpen ? "flex" : "hidden"}`}
+        >
           {navItems.map((item, index) => (
             <div key={index} className="group">
-              <Link onClick={()=> setNavOpen(false)} href={item.url}>{item.name}</Link>
+              <Link onClick={() => setNavOpen(false)} href={item.url}>
+                {item.name}
+              </Link>
               <div
                 style={{ backgroundColor: Theme.darkGreen }}
                 className="h-0.5 opacity-0 group-hover:opacity-100"
               ></div>
             </div>
           ))}
-          <Link
-            onClick={()=> setNavOpen(false)}
-            style={{ backgroundColor: Theme.darkGreen }}
-            href={"/signin"}
-            className="flex gap-1 text-white px-4 py-1.5 rounded-sm items-center group md:hidden"
-          >
-            Get Started
-            <GoArrowUpRight className="group-hover:translate-x-0.5 transition-all duration-200" />
-          </Link>
+          {!session && (
+            <Link
+              onClick={() => setNavOpen(false)}
+              style={{ backgroundColor: Theme.darkGreen }}
+              href={"/signin"}
+              className="flex gap-1 text-white px-4 py-1.5 rounded-sm items-center group md:hidden"
+            >
+              Get Started
+              <GoArrowUpRight className="group-hover:translate-x-0.5 transition-all duration-200" />
+            </Link>
+          )}
         </div>
 
-        <button onClick={()=> setNavOpen(!navOpen)} className="text-2xl lg:hidden z-50">
-            {
-                navOpen ? <CgClose /> : <HiOutlineMenuAlt4 />
-            }      
+        <button
+          onClick={() => setNavOpen(!navOpen)}
+          className="text-2xl lg:hidden z-50"
+        >
+          {navOpen ? <CgClose /> : <HiOutlineMenuAlt4 />}
         </button>
       </div>
     </main>

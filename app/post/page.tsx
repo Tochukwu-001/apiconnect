@@ -1,7 +1,9 @@
+import PostClient from "./post";
+
 export default function Post () {
     return (
         <main>
-            Post
+            <PostClient/>
         </main>
     )
 }
