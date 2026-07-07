@@ -1,9 +1,15 @@
+import { auth } from "@/auth";
 import PostClient from "./post";
+import { redirect } from "next/navigation";
 
-export default function Post () {
+export default async function Post () {
+    const session = await auth()
+    if(!session){
+        redirect("/signin")
+    }
     return (
         <main>
-            <PostClient/>
+            <PostClient session={session}/>
         </main>
     )
 }
