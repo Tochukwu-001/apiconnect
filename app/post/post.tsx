@@ -1,13 +1,36 @@
 "use client"
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { FaCloudUploadAlt } from "react-icons/fa";
+import { FaCheckCircle, FaCloudUploadAlt } from "react-icons/fa";
 import * as Yup from 'yup';
 import { Theme } from "@/components/Theme";
-import { collection, addDoc } from "firebase/firestore"; 
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
 import { db } from '@/config/firebase';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { useState } from 'react';
+import Box from '@mui/material/Box';
+import { FiLoader } from 'react-icons/fi';
+
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 
 export default function PostClient({session}:{session:any}) {
+      const [open, setOpen] = useState(false);
+     const handleOpen = () => setOpen(true);
+     const handleClose = () => setOpen(false);
+     const [sending, setSending]= useState(false)
+
     const iv = {
         title: "",
         endpoint: "",
@@ -40,15 +63,29 @@ export default function PostClient({session}:{session:any}) {
                 <Formik
                     initialValues={iv}
                     validationSchema={formvalidation}
-                    onSubmit={async(values)=>{
-                        const docRef = await addDoc(collection(db,"apis"),{
+                    onSubmit={async(values,{resetForm})=>{
+                        try {
+                            setSending(true)
+                               const docRef = await addDoc(collection(db,"apis"),{
                             ...values,
                             developer: session?.user?.name,
                             image: session?.user?.image,
                             uid: session?.user?.id,
-                            timestamp: new Date().toLocaleDateString()
+                            timestamp:  serverTimestamp
                         })
+                        resetForm()
+                        handleOpen()
+
                         console.log("Document written with ID: ", docRef.id);
+                            
+                        } catch (error) {
+                            console.error("ERROR>>>> , error");
+                            alert("Anerror occurred.")
+                            
+                        }finally{
+                            setSending(false)
+                        }
+                     
                     }}
                 >
                     <Form className="space-y-6">
@@ -109,16 +146,40 @@ export default function PostClient({session}:{session:any}) {
                         <div className="pt-4">
                             <button 
                                 type='submit'
+                                disabled={sending}
                                 style={{ backgroundColor: Theme.darkGreen }}
-                                className="w-full flex items-center justify-center gap-2 text-white font-medium py-3.5 px-4 rounded-lg hover:opacity-90 active:scale-[0.99] transition-all"
+                                className={`w-full flex items-center justify-center gap-2 text-white font-medium py-3.5 px-4 rounded-lg hover:opacity-90 active:scale-[0.99] transition-all ${sending? "grayscale cursor-not-allowed" : "cursor-pointer"} `}
                             >
                                 Upload
-                                <FaCloudUploadAlt className="text-lg" />
+                                {
+                                    sending ?(<FiLoader className='text-base animate-spin' />):( <FaCloudUploadAlt className="text-lg" />)
+                                }
                             </button>
                         </div>
 
                     </Form>
                 </Formik>
+            </div>
+             <div>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="span">
+                    <div className='flex items-center justify-center'>
+                    <FaCheckCircle  className='text-9xl  text-green-500'/>
+                    </div>
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    <p className='text-center'>
+                        Submission Sucessful! Thank you for your contribution to the community
+                    </p>
+                </Typography>
+                </Box>
+            </Modal>
             </div>
         </main>
     )
