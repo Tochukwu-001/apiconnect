@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Theme } from "@/components/Theme";
 import { FiArrowRight, FiLock, FiMail } from "react-icons/fi";
-import { FcGoogle } from "react-icons/fc"; // Standard colorful Google icon
+import { FcGoogle } from "react-icons/fc"; 
 import { redirect } from "next/navigation";
 
 export default async function SignIn() {
@@ -40,23 +40,20 @@ export default async function SignIn() {
 
         {/* OAuth Buttons Group */}
         <div className="space-y-3">
-          
           <form
             action={async () => {
-              "use server"
-              await signIn("google")
+              "use server";
+              await signIn("google", { redirectTo: "/post" });
             }}
           >
             <button type="submit"
-            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 text-sm font-medium py-2.5 px-4 rounded-sm transition duration-200 shadow-md"
-          >
-            <FcGoogle size={20} />
-            <span>Sign in with Google</span>
-          </button>
-            
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 text-sm font-medium py-2.5 px-4 rounded-sm transition duration-200 shadow-md"
+            >
+              <FcGoogle size={20} />
+              <span>Sign in with Google</span>
+            </button>
           </form>
         </div>
-
 
         {/* Divider */}
         <div className="flex items-center my-4">
@@ -70,7 +67,7 @@ export default async function SignIn() {
           {/* Email Input */}
           <div className="space-y-1.5">
             <label className="block text-xs font-medium text-gray-400 font-mono" htmlFor="email">
-              // EMAIL_ADDRESS
+              EMAIL_ADDRESS
             </label>
             <div className="relative flex items-center">
               <FiMail className="absolute left-3 text-gray-600" size={16} />
@@ -88,7 +85,7 @@ export default async function SignIn() {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-medium text-gray-400 font-mono" htmlFor="password">
-                // ACCESS_SECRET
+                ACCESS_SECRET
               </label>
               <a href="#" className="text-[11px] hover:underline" style={{ color: Theme.lightGreen }}>
                 Forgot secret?
@@ -121,7 +118,7 @@ export default async function SignIn() {
         <div className="text-center text-xs text-gray-500 pt-2 font-light">
           New to the platform?{" "}
           <Link href="/signup" className="hover:underline font-medium" style={{ color: Theme.lightGreen }}>
-            Create an developer identity
+            Create a developer identity
           </Link>
         </div>
 
