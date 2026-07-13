@@ -1,9 +1,19 @@
 
-
 import Link from "next/link";
 import { Theme } from "@/components/Theme";
+import { auth } from "@/auth";
+import { signIn } from "@/auth"
+import { redirect } from "next/navigation";
 
-export default function SignInPage() {
+export default async function SignInPage() {
+
+  const session = await auth ()
+  console.log(session)
+
+  if(session){
+    redirect("/post")
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle native credential validation logic here
@@ -14,7 +24,7 @@ export default function SignInPage() {
   };
 
   return (
-    <main 
+    <main
       className="min-h-screen w-full flex items-center justify-center relative bg-cover bg-center overflow-hidden"
       style={{ backgroundImage: "url('/bg.mp4' ? '' : '/your-library-image.jpg')" }} // Reuses your background style layer
     >
@@ -23,7 +33,7 @@ export default function SignInPage() {
 
       {/* Glassmorphic Container Box */}
       <div className="relative z-10 w-full max-w-md mx-4 p-8 rounded-2xl bg-[#000]/60 backdrop-blur-md border border-gray-800 shadow-2xl text-white flex flex-col items-center">
-        
+
         {/* Branding Logo Indicator */}
         <div className="flex flex-col items-center gap-1.5 mb-6">
           <div className="text-2xl font-bold tracking-wide" style={{ color: Theme.lightGreen }}>
@@ -40,8 +50,15 @@ export default function SignInPage() {
         </h1>
 
         {/* 1. GOOGLE AUTHENTICATION BUTTON */}
-        <button
-          
+     
+        <form
+          action={async () => {
+            "use server"
+            await signIn("google")
+          }}
+        >
+          <button
+          type="submit"
           className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 font-medium py-3 px-4 rounded-md transition-colors duration-200 text-sm shadow-sm mb-6"
         >
           {/* Integrated inline Google Icon Vector */}
@@ -63,8 +80,9 @@ export default function SignInPage() {
               d="M12 24c3.24 0 5.956-1.077 7.945-2.91l-3.755-2.91c-1.04.695-2.373 1.11-4.19 1.11-3.31 0-6.114-2.237-7.114-5.245L1.004 17.39A11.926 11.926 0 0012 24z"
             />
           </svg>
-          Sign in with Google
+          Continue in with Google
         </button>
+        </form>
 
         {/* Divider text string line */}
         <div className="w-full flex items-center justify-center gap-3 mb-6">
@@ -76,7 +94,7 @@ export default function SignInPage() {
         </div>
 
         {/* 2. NATIVE CREDENTIAL SIGN IN FORM */}
-        <form  className="w-full space-y-5">
+        <form className="w-full space-y-5">
           {/* Email or Username Entry field */}
           <div className="space-y-1.5">
             <label className="text-xs font-medium tracking-wide block" style={{ color: Theme.lightGreen }}>
@@ -88,7 +106,7 @@ export default function SignInPage() {
               placeholder="Email or Username"
               className="w-full px-4 py-3 bg-[#161b22]/50 border rounded-md text-sm text-white placeholder-gray-600 focus:outline-none transition-colors"
               style={{ borderColor: `${Theme.darkGreen}80` }}
-          
+
             />
           </div>
 
@@ -108,7 +126,7 @@ export default function SignInPage() {
               placeholder="Password"
               className="w-full px-4 py-3 bg-[#161b22]/50 border rounded-md text-sm text-white placeholder-gray-600 focus:outline-none transition-colors"
               style={{ borderColor: `${Theme.darkGreen}80` }}
-         
+
             />
           </div>
 
