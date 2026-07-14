@@ -41,6 +41,10 @@ export default function Navbar (){
             name: "View Endpoints",
             url: "/view",
         },
+        // {
+        //     name: "profile",
+        //     url: "/profile"
+        // }
     ]
 const id = useId();
   const buttonId = `${id}-button`;
