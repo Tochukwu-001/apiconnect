@@ -34,13 +34,13 @@ export default function PostClient({session}:{session:any}) {
     const iv = {
         title: "",
         endpoint: "",
-        docs: "",
+        doc: "",
     }
 
     const formvalidation = Yup.object({
         title: Yup.string().required("This is a required field"),
         endpoint: Yup.string().required("supply endpoint").max(100, "Maximun of 100 characters"),
-        docs: Yup.string().required("This is a required field"),
+        doc: Yup.string().required("This is a required field"),
     })
 
     return (
@@ -71,7 +71,7 @@ export default function PostClient({session}:{session:any}) {
                             developer: session?.user?.name,
                             image: session?.user?.image,
                             uid: session?.user?.id,
-                            timestamp:  serverTimestamp
+                            timestamp:  serverTimestamp()
                         })
                         resetForm()
                         handleOpen()
@@ -79,7 +79,7 @@ export default function PostClient({session}:{session:any}) {
                         console.log("Document written with ID: ", docRef.id);
                             
                         } catch (error) {
-                            console.error("ERROR>>>> , error");
+                            console.error(" this error was caused by.... ", error);
                             alert("Anerror occurred.")
                             
                         }finally{
@@ -131,7 +131,7 @@ export default function PostClient({session}:{session:any}) {
                             </label>
                             <Field 
                                 as="textarea" 
-                                name="docs" 
+                                name="doc" 
                                 placeholder="Enter your docs...."
                                 className="bg-black/50 border border-white/10 text-white rounded-lg px-4 py-3 outline-none focus:border-emerald-500/50 focus:bg-black/80 transition-all placeholder:text-gray-600 min-h-[160px] resize-y"
                             />
@@ -174,9 +174,9 @@ export default function PostClient({session}:{session:any}) {
                     </div>
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    <p className='text-center'>
+                    <span className='text-center'>
                         Submission Sucessful! Thank you for your contribution to the community
-                    </p>
+                    </span>
                 </Typography>
                 </Box>
             </Modal>

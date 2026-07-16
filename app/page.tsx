@@ -23,7 +23,7 @@ export default function Home() {
             <p className="text-white font-thin text-xl text-center"> The seemless integration platform for modern developer. Effortlessly connect your apps, manage your endpoints, and power your digital products with clean, fast APIs.</p>
             <div className="text-white flex items-center justify-center gap-5 max-md:flex-col max-md:p-2">
               <Link style={{backgroundColor:Theme.darkGreen}} href={"/view"} className="px-8 py-3 rounded-sm font-medium text-lg max-md:w-full text-center">Explore APIs</Link>
-              <Link href={"/post"} className="border border-white px-8 py-3  rounded-sm max-md:w-full text-center">Pnblish Endpoints</Link>
+              <Link href={"/post"} className="border border-white px-8 py-3  rounded-sm max-md:w-full text-center">Publish Endpoints</Link>
             </div>
           </div>
         </div>

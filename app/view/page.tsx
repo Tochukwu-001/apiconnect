@@ -1,9 +1,46 @@
+"use client"
 import { FaRegTrashAlt } from "react-icons/fa";
 import Link from "next/link";
 import { GoArrowUpRight } from "react-icons/go";
 import { Theme } from "@/components/Theme";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { db } from "@/config/firebase";
+import { useEffect, useState } from "react";
+
+interface ApiDoc {
+    id: string;
+    title: string;
+    endpoint: string;
+    doc: string;
+    developer?: string;
+    image?: string;
+    uid?: string;
+    timestamp?: any; // Fixed typo to match your database query
+}
 
 export default function View() {
+    const [apis, setApis] = useState<ApiDoc[]>([])
+    const [Loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        async function fetchApis() {
+            try {
+                const q = query(collection(db, "apis"), orderBy("timestamp", "desc"));
+                const snapshot = await getDocs(q)
+                const results: ApiDoc[] = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...(doc.data() as Omit<ApiDoc, "id">),
+                }))
+                setApis(results)
+            } catch (error) {
+                console.error("error fetching apis", error);
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchApis()
+    }, []);
+
     return (
         <main className="min-h-dvh bg-[#0B0F17] text-white max-md:p-4 p-8">
             
@@ -21,55 +58,74 @@ export default function View() {
             </header>
 
             {/* Grid Section */}
-            <section className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                {/* API Card 1 */}
-                <div className="bg-white/[0.02] border border-white/10 rounded-lg p-5 flex flex-col justify-between hover:border-white/20 transition-all duration-300 shadow-xl group">
-                    <div className="space-y-4">
-                        {/* Card Top: Author & Action */}
-                        <div className="flex items-center justify-between">  
-                            <div className="flex items-center gap-2.5">
-                                <img 
-                                    src="/logo.png" 
-                                    alt="Samuel Chukwuma" 
-                                    className="w-8 h-8 rounded-full border border-white/10"
-                                />
-                                <h2 className="text-sm font-medium text-gray-300">Samuel Chukwuma</h2>
-                            </div>
-                            <button className="p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-md transition duration-200">
-                                <FaRegTrashAlt size={14} />
-                            </button>
-                        </div>
-
-                        {/* Card Middle: Info */}
-                        <div className="space-y-2">
-                            <h3 className="font-semibold text-lg text-white group-hover:text-emerald-400 transition duration-200">
-                                Dummy Products API
-                            </h3>
-                            <article className="space-y-1">
-                                <p className="text-[11px] font-mono tracking-wider uppercase text-gray-500">
-                                    Documentation
-                                </p>
-                                <p className="text-sm text-gray-400 leading-relaxed line-clamp-3 font-light">
-                                    Instant placeholder data for E-Commerce layouts, store inventories, and cart testing. Fast response layout mimicking live production database items perfectly.
-                                </p>
-                            </article>
-                        </div>
-                    </div>
-
-                    {/* Card Bottom: Metadata & Button */}
-                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/5">
-                        <p className="text-xs font-mono text-gray-500">2/7/2026</p>
-                        <Link 
-                            style={{ backgroundColor: Theme.darkGreen }} 
-                            className="flex text-xs font-medium rounded-sm px-3.5 py-1.5 items-center gap-1 text-white hover:opacity-90 transition duration-200" 
-                            href="#"
+                {/* Fixed Conditional Logic */}
+                {Loading ? (
+                    <p className="text-gray-500 animate-pulse col-span-full">Loading APIs.....</p>
+                ) : apis.length === 0 ? (
+                    <p className="text-gray-500 col-span-full">No APIs Published yet. Be the first to Publish one.</p>
+                ) : (
+                    apis.map((api) => (
+                        <div 
+                            key={api.id} 
+                            className="bg-white/[0.02] border border-white/5 rounded-md p-5 flex flex-col justify-between space-y-5 hover:border-white/10 transition-all duration-300 shadow-xl backdrop-blur-sm group"
                         >
-                            View Docs <GoArrowUpRight className="text-sm" />
-                        </Link>
-                    </div>
-                </div>
-
+                            {/* Top Tier: Avatar & Delete */}
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <img 
+                                        src={api.image || "/logo.png"} // Fixed typo .pgn to .png
+                                        alt={api.developer || "Publisher"} 
+                                        className="w-8 h-8 rounded-full bg-neutral-800 object-cover border border-neutral-700"
+                                    />
+                                    <div>
+                                        <h2 className="text-sm font-medium text-white leading-tight">
+                                            {api.developer || "Unknown Developer"}
+                                        </h2>
+                                        <p className="text-[10px] text-neutral-400 font-light uppercase tracking-wider">
+                                            Publisher
+                                        </p>
+                                    </div>
+                                </div>
+                                <button className="p-2 text-neutral-400 hover:text-red-400 hover:bg-red-500/10 rounded-sm transition-all duration-300">
+                                    <FaRegTrashAlt className="text-sm" />
+                                </button>
+                            </div>
+                            
+                            {/* Middle Tier: Content */}
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-lg text-neutral-100 group-hover:text-white transition-colors line-clamp-1">
+                                    {api.title}
+                                </h3>
+                                <div className="space-y-1.5">
+                                    <span className="text-[10px] uppercase font-semibold tracking-wider block" style={{ color: Theme.lightGreen }}>
+                                        Documentation
+                                    </span>
+                                    <p className="text-sm font-light text-neutral-400 line-clamp-3 leading-relaxed">
+                                        {api.docs}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {/* Bottom Tier: Date & Button */}
+                            <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                                <p className="text-xs text-neutral-500 font-mono">
+                                    {/* Safely convert Firestore timestamp to a readable date */}
+                                    {api.timestamp?.toDate?.().toLocaleDateString() || "Unknown"}
+                                </p>
+                                <Link
+                                    href={api.endpoint || "#"}
+                                    style={{ backgroundColor: Theme.darkGreen }}
+                                    className="text-white flex items-center gap-1.5 rounded-sm px-4 py-1.5 text-xs font-medium hover:opacity-90 transition-all duration-200 group/btn"
+                                >
+                                    View doc
+                                    <GoArrowUpRight className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform duration-300" />
+                                </Link>
+                            </div>
+                        </div>
+                    ))
+                )}
             </section>
         </main>
     );
