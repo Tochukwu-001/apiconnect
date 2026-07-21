@@ -1,92 +1,108 @@
-import { Theme } from "@/components/Theme";
 import Link from "next/link";
 import Image from "next/image";
+import { Theme } from "@/components/Theme";
+import { FiArrowRight, FiTerminal, FiGlobe, FiGitBranch } from "react-icons/fi";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
-  const footerLinks = [
-    {
-      title: "Platform",
-      links: [
-        { name: "Explore APIs", url: "/view" },
-        { name: "Publish Endpoints", url: "/post" },
-        { name: "Documentation", url: "/docs" },
-      ],
-    },
-    {
-      title: "Company",
-      links: [
-        { name: "About Us", url: "/about" },
-        { name: "Careers", url: "/careers" },
-        { name: "Contact", url: "/contact" },
-      ],
-    },
-    {
-      title: "Legal",
-      links: [
-        { name: "Privacy Policy", url: "/privacy" },
-        { name: "Terms of Service", url: "/terms" },
-      ],
-    },
-  ];
-
   return (
-    <footer className="bg-neutral-950 border-t border-neutral-900 text-neutral-400 py-12 px-6 md:px-12 lg:px-24">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 pb-12">
-          
-          {/* Brand Column */}
-          <div className="md:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-0.5 text-white">
-              <Image
-                src="/logo.png"
-                alt="API Connect logo"
-                width={500}
-                height={500}
-                className="w-6 h-6 brightness-90"
-              />
-              <span className="text-lg font-light">
-                Connect
-              </span>
-            </Link>
-            <p className="text-sm font-light text-neutral-500 max-w-xs leading-relaxed">
-              The universal bridge for your data. Powering modern digital products with clean, reliable, and secure API structures.
-            </p>
-          </div>
+    <footer className="bg-[#090D14] border-t border-white/10 font-sans text-gray-400 text-xs">
+      {/* Top Banner: Newsletter / CTA Box */}
+      <div className="max-w-6xl mx-auto px-6 py-8 border-b border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <h4 className="text-white font-medium text-sm flex items-center gap-2">
+            <FiTerminal style={{ color: Theme.lightGreen }} /> Stay updated on API schema releases
+          </h4>
+          <p className="text-gray-500 font-light">No spam. Just engineering logs and system feature updates.</p>
+        </div>
+        <form className="flex w-full md:w-auto max-w-sm border border-white/10 rounded-sm overflow-hidden bg-black/40 focus-within:border-white/30 transition">
+          <input 
+            type="email" 
+            placeholder="developer@domain.com" 
+            className="bg-transparent px-3 py-2 text-white placeholder-gray-600 outline-none w-full text-xs"
+          />
+          <button 
+            type="submit" 
+            style={{ backgroundColor: Theme.darkGreen }} 
+            className="px-4 text-white hover:opacity-95 flex items-center justify-center transition"
+          >
+            <FiArrowRight />
+          </button>
+        </form>
+      </div>
 
-          {/* Links Columns */}
-          {footerLinks.map((group, index) => (
-            <div key={index} className="space-y-3">
-              <h4 className="text-xs font-semibold text-neutral-200 uppercase tracking-wider">
-                {group.title}
-              </h4>
-              <ul className="space-y-2 text-sm font-light">
-                {group.links.map((link, linkIdx) => (
-                  <li key={linkIdx}>
-                    <Link 
-                      href={link.url} 
-                      className="hover:text-white transition-colors duration-200"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-
+      {/* Middle Grid: Dynamic Quicklinks */}
+      <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-8">
+        
+        {/* Simplified Logo Hub */}
+        <div className="col-span-2 lg:col-span-1 space-y-3">
+          <Link href="/" className="flex items-center gap-2 text-white">
+            <Image
+              src="/logo.png"
+              alt="API Connect logo"
+              width={24}
+              height={24}
+              className="w-6 h-6 grayscale opacity-80"
+            />
+            <span className="font-medium tracking-tight">api_connect</span>
+          </Link>
+          <p className="text-gray-600 font-mono text-[11px] leading-relaxed">
+            v2.4.1-stable <br />
+            built_for_scale.exe
+          </p>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-neutral-900 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-light text-neutral-600">
-          <p>© {currentYear} API Connect. All rights reserved.</p>
+        {/* Links: Discover */}
+        <div className="space-y-2.5">
+          <span className="text-gray-500 font-mono text-[11px] uppercase tracking-wider block">01 // Discover</span>
+          <ul className="space-y-2 font-light">
+            <li><Link href="/view" className="hover:text-white transition">Explore Endpoints</Link></li>
+            <li><Link href="/post" className="hover:text-white transition">Submit Integration</Link></li>
+            <li><a href="#" className="hover:text-white transition">Global Graph</a></li>
+          </ul>
+        </div>
+
+        {/* Links: Platform */}
+        <div className="space-y-2.5">
+          <span className="text-gray-500 font-mono text-[11px] uppercase tracking-wider block">02 // Network</span>
+          <ul className="space-y-2 font-light">
+            <li><a href="#" className="hover:text-white transition">Edge Cache Pricing</a></li>
+            <li><a href="#" className="hover:text-white transition">Gateway Security</a></li>
+            <li><a href="#" className="hover:text-white transition">System Metrics</a></li>
+          </ul>
+        </div>
+
+        {/* Links: Docs */}
+        <div className="space-y-2.5">
+          <span className="text-gray-500 font-mono text-[11px] uppercase tracking-wider block">03 // Resources</span>
+          <ul className="space-y-2 font-light">
+            <li><a href="#" className="hover:text-white transition">Dev Guides</a></li>
+            <li><a href="#" className="hover:text-white transition">SDK Wrappers</a></li>
+            <li><a href="#" className="hover:text-white transition">OpenAPI Spec</a></li>
+          </ul>
+        </div>
+
+        {/* Links: Corporate */}
+        <div className="space-y-2.5">
+          <span className="text-gray-500 font-mono text-[11px] uppercase tracking-wider block">04 // Core</span>
+          <ul className="space-y-2 font-light">
+            <li><Link href="/about" className="hover:text-white transition">Our Team</Link></li>
+            <li><a href="#" className="hover:text-white transition">Legal Matrix</a></li>
+            <li><a href="#" className="hover:text-white transition">Support Ticket</a></li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Bottom Technical Strip */}
+      <div className="border-t border-white/5 bg-black/40 text-[11px] text-gray-600 font-mono">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <span>&copy; {new Date().getFullYear()} APIS_CONNECT_INC</span>
+            <span className="flex items-center gap-1"><FiGlobe /> region: global-edge</span>
+            <span className="flex items-center gap-1"><FiGitBranch /> branch: main</span>
+          </div>
           <div className="flex items-center gap-2">
-            <span>Status:</span>
-            <span className="flex items-center gap-1.5 font-medium" style={{ color: Theme.lightGreen }}>
-              <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: Theme.lightGreen }}></span>
-              All Systems Operational
-            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-gray-500">latency: 7ms to edge</span>
           </div>
         </div>
       </div>

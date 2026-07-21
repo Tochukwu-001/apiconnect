@@ -1,7 +1,7 @@
-export default function About () {
-    return (
+export default function About(){
+    return(
         <main>
-            About Us
+            About
         </main>
     )
 }

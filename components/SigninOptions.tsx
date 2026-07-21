@@ -1,13 +1,13 @@
+
 import { SessionProvider } from "next-auth/react";
 
-export default function SigninOptions (
-    {
+export default function SigninOptons({
   children,
 }: Readonly<{
   children: React.ReactNode;
-} >
-) {
-    return (
+}>){
+
+    return(
         <main>
             <SessionProvider>
                 {children}

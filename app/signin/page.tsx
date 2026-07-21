@@ -1,134 +1,130 @@
+import { auth, signIn } from "@/auth"
 import Link from "next/link";
 import Image from "next/image";
-import { FcGoogle } from "react-icons/fc";
-import { GoArrowRight, GoLock, GoMail } from "react-icons/go";
 import { Theme } from "@/components/Theme";
-import { auth, signIn } from "@/auth";
+import { FiArrowRight, FiLock, FiMail } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc"; // Standard colorful Google icon
 import { redirect } from "next/navigation";
 
 export default async function SignIn() {
-
   const session = await auth()
   console.log(session);
-  
   if(session){
     redirect("/post")
   }
-  
-  return (
-    <main className="min-h-dvh bg-neutral-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Background radial accent glow to match the landing page theme */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] blur-[150px] rounded-full pointer-events-none opacity-10"
-        style={{ backgroundColor: Theme.lightGreen }}
-      ></div>
 
-      <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 rounded-md p-8 relative z-10 shadow-2xl">
-        {/* Brand Header */}
-        <div className="flex flex-col items-center text-center mb-8 bg-stone-100 py-6 space-y-2">
-          <Link href="/" className="flex items-center gap-0.5 text-black">
+  return (
+    <main className="min-h-dvh bg-[#0B0F17] flex items-center justify-center p-4 selection:bg-emerald-500/30">
+      {/* Container Card */}
+      <div className="w-full max-w-md bg-white/[0.02] border border-white/10 rounded-xl p-8 backdrop-blur-md shadow-2xl space-y-6">
+
+        {/* Header/Logo Section */}
+        <div className="text-center space-y-2">
+          <Link href="/" className="inline-flex items-center gap-2 text-white">
             <Image
               src="/logo.png"
               alt="API Connect logo"
-              width={100}
-              height={100}
-              className="w-8 h-8"
+              width={28}
+              height={28}
+              className="w-7 h-7"
             />
-            <span className="text-xl font-light">Connect</span>
+            <span className="text-lg font-light tracking-wide">
+              API <span style={{ color: Theme.lightGreen }}>Connect</span>
+            </span>
           </Link>
-          <h1 className="text-xl font-semibold text-black">Welcome back</h1>
-          <p className="text-sm font-light text-neutral-800 mt-1">
-            Access your developer endpoints dashboard
+          <h2 className="text-xl font-semibold text-white pt-2">Welcome back</h2>
+          <p className="text-xs text-gray-500">
+            Enter your credentials to access your API keys and endpoints
           </p>
         </div>
 
-        {/* OAuth Button */}
-        <form
-          action={async () => {
-            "use server";
-            await signIn("google");
-          }}
-        >
-          <button
-            type="submit"
-            className="w-full flex items-center justify-center gap-3 bg-neutral-950 hover:bg-neutral-950/70 border border-neutral-800 hover:border-neutral-700 text-white font-light text-sm py-2.5 px-4 rounded-sm transition-colors group mb-6"
+        {/* OAuth Buttons Group */}
+        <div className="space-y-3">
+          
+          <form
+            action={async () => {
+              "use server"
+              await signIn("google")
+            }}
           >
-            <FcGoogle className="text-xl" />
-            Continue with Google
+            <button type="submit"
+            className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 text-sm font-medium py-2.5 px-4 rounded-sm transition duration-200 shadow-md"
+          >
+            <FcGoogle size={20} />
+            <span>Sign in with Google</span>
           </button>
-        </form>
+            
+          </form>
+        </div>
 
-        {/* Separator Divider */}
-        <div className="flex items-center my-5 text-xs text-neutral-500 uppercase tracking-wider before:content-[''] before:flex-1 before:border-b before:border-neutral-800 before:mr-3 after:content-[''] after:flex-1 after:border-b after:border-neutral-800 after:ml-3">
-          or use credentials
+
+        {/* Divider */}
+        <div className="flex items-center my-4">
+          <div className="flex-grow border-t border-white/5"></div>
+          <span className="px-3 text-[11px] text-gray-600 font-mono uppercase tracking-widest">or continue with</span>
+          <div className="flex-grow border-t border-white/5"></div>
         </div>
 
         {/* Credentials Form */}
         <form className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
-              Email Address
+          {/* Email Input */}
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-gray-400 font-mono" htmlFor="email">
+              // EMAIL_ADDRESS
             </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
-                <GoMail className="text-lg" />
-              </span>
+            <div className="relative flex items-center">
+              <FiMail className="absolute left-3 text-gray-600" size={16} />
               <input
+                id="email"
                 type="email"
                 required
-                placeholder="developer@api-connect.com"
-                className="w-full bg-neutral-950 text-white placeholder-neutral-600 border border-neutral-800 focus:border-neutral-600 outline-none rounded-sm py-2 pl-10 pr-4 text-sm transition-colors"
+                placeholder="name@domain.com"
+                className="w-full bg-black/40 border border-white/10 rounded-sm py-2 pl-10 pr-4 text-sm text-white placeholder-gray-700 outline-none focus:border-white/20 transition"
               />
             </div>
           </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-1.5">
-              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
-                Password
+          {/* Password Input */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-medium text-gray-400 font-mono" htmlFor="password">
+                // ACCESS_SECRET
               </label>
-              <Link
-                href="/forgot-password"
-                className="text-xs hover:underline"
-                style={{ color: Theme.lightGreen }}
-              >
-                Forgot?
-              </Link>
+              <a href="#" className="text-[11px] hover:underline" style={{ color: Theme.lightGreen }}>
+                Forgot secret?
+              </a>
             </div>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
-                <GoLock className="text-lg" />
-              </span>
+            <div className="relative flex items-center">
+              <FiLock className="absolute left-3 text-gray-600" size={16} />
               <input
+                id="password"
                 type="password"
                 required
                 placeholder="••••••••"
-                className="w-full bg-neutral-950 text-white placeholder-neutral-600 border border-neutral-800 focus:border-neutral-600 outline-none rounded-sm py-2 pl-10 pr-4 text-sm transition-colors"
+                className="w-full bg-black/40 border border-white/10 rounded-sm py-2 pl-10 pr-4 text-sm text-white placeholder-gray-700 outline-none focus:border-white/20 transition"
               />
             </div>
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             style={{ backgroundColor: Theme.darkGreen }}
-            className="w-full text-white py-2.5 px-4 rounded-sm font-medium text-sm transition-transform hover:scale-[1.01] flex items-center justify-center gap-1 group mt-6"
+            className="w-full mt-2 text-white text-sm font-medium py-2.5 px-4 rounded-sm hover:opacity-95 transition flex items-center justify-center gap-1.5 group"
           >
-            Sign In
-            <GoArrowRight className="group-hover:translate-x-0.5 transition-transform duration-200" />
+            Authenticate
+            <FiArrowRight className="group-hover:translate-x-0.5 transition duration-200" />
           </button>
         </form>
 
-        {/* Footer Navigation */}
-        <div className="text-center mt-6 text-sm font-light text-neutral-500">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/signup"
-            className="hover:underline font-normal"
-            style={{ color: Theme.lightGreen }}
-          >
-            Create one
+        {/* Signup redirection block */}
+        <div className="text-center text-xs text-gray-500 pt-2 font-light">
+          New to the platform?{" "}
+          <Link href="/signup" className="hover:underline font-medium" style={{ color: Theme.lightGreen }}>
+            Create an developer identity
           </Link>
         </div>
+
       </div>
     </main>
   );

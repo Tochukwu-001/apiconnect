@@ -1,189 +1,186 @@
-"use client";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { IoCloudUploadOutline } from "react-icons/io5";
-import * as Yup from "yup";
+"use client"
+import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { FaCheckCircle, FaCloudUploadAlt } from "react-icons/fa";
+import * as Yup from 'yup';
 import { Theme } from "@/components/Theme";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "@/config/firebase";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import { useState } from "react";
-import Box from "@mui/material/Box";
-import { FiLoader } from "react-icons/fi";
-import { FaCheckCircle } from "react-icons/fa";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"; 
+import { db } from '@/config/firebase';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { useState } from 'react';
+import Box from '@mui/material/Box';
+import { FiLoader } from 'react-icons/fi';
+
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
 
-export default function PostClient({ session }: { session: any }) {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [sending, setSending] = useState(false);
 
-  const iv = {
-    title: "",
-    endpoint: "",
-    docs: "",
-  };
+export default function PostClient({session}:{session:any}) {
+      const [open, setOpen] = useState(false);
+     const handleOpen = () => setOpen(true);
+     const handleClose = () => setOpen(false);
+     const [sending, setSending]= useState(false)
 
-  const formValidation = Yup.object({
-    title: Yup.string().required("This is a required field"),
-    endpoint: Yup.string()
-      .required("Supply endpoint")
-      .max(100, "Maximum of 100 characters"),
-    docs: Yup.string().required("This is a required field"),
-  });
+    const iv = {
+        title: "",
+        endpoint: "",
+        doc: "",
+    }
 
-  return (
-    <main className="min-h-dvh bg-neutral-950 text-neutral-200 max-md:p-4 p-8 flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Background radial glow matching the landing/signin flow */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] blur-[160px] rounded-full pointer-events-none opacity-5"
-        style={{ backgroundColor: Theme.lightGreen }}
-      ></div>
+    const formvalidation = Yup.object({
+        title: Yup.string().required("This is a required field"),
+        endpoint: Yup.string().required("supply endpoint").max(100, "Maximun of 100 characters"),
+        doc: Yup.string().required("This is a required field"),
+    })
 
-      <div className="w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-md p-6 md:p-10 relative z-10 shadow-2xl">
-        {/* Form Header */}
-        <header className="mb-8 space-y-2">
-          <h1 className="text-xl md:text-2xl font-bold text-white tracking-tight">
-            Publish a New{" "}
-            <span style={{ color: Theme.lightGreen }} className="italic">
-              API Endpoint
-            </span>
-          </h1>
-          <p className="text-xs md:text-sm font-light text-neutral-400">
-            Fill out the configuration below to deploy your infrastructure
-            parameters instantly to our public index ecosystem.
-          </p>
-        </header>
+    return (
+        <main className='min-h-dvh bg-[#0B0F17] flex items-center justify-center p-4 relative overflow-hidden'>
+            
+            {/* Ambient Background Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-900/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-        <Formik
-          initialValues={iv}
-          validationSchema={formValidation}
-          onSubmit={async (values, { resetForm }) => {
-            try {
-              setSending(true);
-              const docRef = await addDoc(collection(db, "apis"), {
-                ...values,
-                developer: session?.user?.name,
-                image: session?.user?.image,
-                uid: session?.user?.id,
-                timestamp: new Date().toLocaleDateString(),
-              });
-              resetForm();
-              handleOpen();
-              // console.log("Document written with ID: ", docRef);
-            } catch (error) {
-              console.error("ERROR>>>>", error);
-              alert("An error occurred");
-            } finally {
-              setSending(false);
-            }
-          }}
-        >
-          <Form className="space-y-6">
-            {/* Title Field */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
-                API Title
-              </label>
-              <Field
-                name="title"
-                placeholder="e.g. Dummy Products API"
-                className="w-full bg-neutral-950 text-white placeholder-neutral-700 border border-neutral-800 focus:border-neutral-600 outline-none rounded-sm py-2.5 px-4 text-sm transition-colors font-light"
-              />
-              <ErrorMessage
-                name="title"
-                component="p"
-                className="text-xs text-red-400 font-light pt-0.5"
-              />
+            {/* Centered Form Card */}
+            <div className="w-full max-w-2xl bg-white/[0.02] border border-white/10 rounded-2xl p-8 md:p-12 backdrop-blur-xl shadow-2xl relative z-10">
+                
+                {/* Header text to give the form context */}
+                <div className="mb-10 text-center space-y-2">
+                    <h1 className="text-3xl font-bold text-white tracking-tight">Publish Endpoint</h1>
+                    <p className="text-gray-400 text-sm font-light">
+                        Upload your API documentation and endpoint to the global registry.
+                    </p>
+                </div>
+
+                <Formik
+                    initialValues={iv}
+                    validationSchema={formvalidation}
+                    onSubmit={async(values,{resetForm})=>{
+                        try {
+                            setSending(true)
+                               const docRef = await addDoc(collection(db,"apis"),{
+                            ...values,
+                            developer: session?.user?.name,
+                            image: session?.user?.image,
+                            uid: session?.user?.id,
+                            timestamp:  serverTimestamp()
+                        })
+                        resetForm()
+                        handleOpen()
+
+                        console.log("Document written with ID: ", docRef.id);
+                            
+                        } catch (error) {
+                            console.error(" this error was caused by.... ", error);
+                            alert("Anerror occurred.")
+                            
+                        }finally{
+                            setSending(false)
+                        }
+                     
+                    }}
+                >
+                    <Form className="space-y-6">
+                        
+                        {/* Title Field */}
+                        <div className="flex flex-col space-y-2">
+                            <label className="text-xs font-mono font-medium text-gray-400 uppercase tracking-widest">
+                                Title
+                            </label>
+                            <Field 
+                                name="title" 
+                                placeholder="e.g Dummy products API"
+                                className="bg-black/50 border border-white/10 text-white rounded-lg px-4 py-3 outline-none focus:border-emerald-500/50 focus:bg-black/80 transition-all placeholder:text-gray-600"
+                            />
+                            <ErrorMessage 
+                                name='title' 
+                                component={"p"} 
+                                className="text-red-400 text-xs mt-1" 
+                            />
+                        </div>
+
+                        {/* Endpoint Field */}
+                        <div className="flex flex-col space-y-2">
+                            <label className="text-xs font-mono font-medium text-gray-400 uppercase tracking-widest">
+                                Endpoint
+                            </label>
+                            <Field 
+                                name="endpoint" 
+                                placeholder="e.g dummyproduct@example.com"
+                                className="bg-black/50 border border-white/10 text-white rounded-lg px-4 py-3 outline-none focus:border-emerald-500/50 focus:bg-black/80 transition-all placeholder:text-gray-600"
+                            />
+                            <ErrorMessage 
+                                name='endpoint' 
+                                component={"p"} 
+                                className="text-red-400 text-xs mt-1" 
+                            />
+                        </div>
+
+                        {/* Documentation Field */}
+                        <div className="flex flex-col space-y-2">
+                            <label className="text-xs font-mono font-medium text-gray-400 uppercase tracking-widest">
+                                Documentation
+                            </label>
+                            <Field 
+                                as="textarea" 
+                                name="doc" 
+                                placeholder="Enter your docs...."
+                                className="bg-black/50 border border-white/10 text-white rounded-lg px-4 py-3 outline-none focus:border-emerald-500/50 focus:bg-black/80 transition-all placeholder:text-gray-600 min-h-[160px] resize-y"
+                            />
+                            <ErrorMessage 
+                                name='docs' 
+                                component={"p"} 
+                                className="text-red-400 text-xs mt-1" 
+                            />
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="pt-4">
+                            <button 
+                                type='submit'
+                                disabled={sending}
+                                style={{ backgroundColor: Theme.darkGreen }}
+                                className={`w-full flex items-center justify-center gap-2 text-white font-medium py-3.5 px-4 rounded-lg hover:opacity-90 active:scale-[0.99] transition-all ${sending? "grayscale cursor-not-allowed" : "cursor-pointer"} `}
+                            >
+                                Upload
+                                {
+                                    sending ?(<FiLoader className='text-base animate-spin' />):( <FaCloudUploadAlt className="text-lg" />)
+                                }
+                            </button>
+                        </div>
+
+                    </Form>
+                </Formik>
             </div>
-
-            {/* Endpoint Field */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
-                Target Endpoint URL
-              </label>
-              <Field
-                name="endpoint"
-                placeholder="e.g. https://api.example.com/v1/products"
-                className="w-full bg-neutral-950 text-white placeholder-neutral-700 border border-neutral-800 focus:border-neutral-600 outline-none rounded-sm py-2.5 px-4 text-sm transition-colors font-light"
-              />
-              <ErrorMessage
-                name="endpoint"
-                component="p"
-                className="text-xs text-red-400 font-light pt-0.5"
-              />
+             <div>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="span">
+                    <div className='flex items-center justify-center'>
+                    <FaCheckCircle  className='text-9xl  text-green-500'/>
+                    </div>
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    <span className='text-center'>
+                        Submission Sucessful! Thank you for your contribution to the community
+                    </span>
+                </Typography>
+                </Box>
+            </Modal>
             </div>
-
-            {/* Documentation Field */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider">
-                API Documentation Structure
-              </label>
-              <Field
-                name="docs"
-                as="textarea"
-                rows={6}
-                placeholder="Enter markdown or text descriptions of schema expectations, response examples, headers, and request methods..."
-                className="w-full bg-neutral-950 text-white placeholder-neutral-700 border border-neutral-800 focus:border-neutral-600 outline-none rounded-sm py-2.5 px-4 text-sm transition-colors font-light resize-none leading-relaxed"
-              />
-              <ErrorMessage
-                name="docs"
-                component="p"
-                className="text-xs text-red-400 font-light pt-0.5"
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="pt-2 flex items-center justify-end">
-              <button
-                type="submit"
-                disabled={sending}
-                style={{ backgroundColor: Theme.darkGreen }}
-                className={`text-white flex items-center justify-center gap-2 rounded-sm px-6 py-2.5 text-sm font-medium hover:brightness-110 transition-all duration-200 shadow-lg  max-sm:w-full group ${sending ? "grayscale cursor-not-allowed" : "cursor-pointer"}`}
-              >
-                Upload Endpoints
-                {sending ? (
-                  <FiLoader className="text-base animate-spin" />
-                ) : (
-                  <IoCloudUploadOutline className="text-base group-hover:-translate-y-0.5 transition-transform duration-200" />
-                )}
-              </button>
-            </div>
-          </Form>
-        </Formik>
-      </div>
-
-      <div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="span">
-              <div className="flex items-center justify-center">
-                <FaCheckCircle className="text-8xl text-green-500" />
-              </div>
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              <p className="text-center">Submission Sucessful! Thank you for your contribution to the community.</p>
-            </Typography>
-          </Box>
-        </Modal>
-      </div>
-    </main>
-  );
+        </main>
+    )
 }
